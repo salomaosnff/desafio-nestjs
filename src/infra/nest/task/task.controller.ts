@@ -23,6 +23,7 @@ import {
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create_task.dto';
 import { UpdateTaskDto } from './dto/update_task.dto';
+import { PagedTaskDto } from './dto/paged_task.dto';
 
 @Controller('tasks')
 export class TaskController {
@@ -41,7 +42,7 @@ export class TaskController {
     @Query('title') title?: string,
     @Query('description') description?: string,
     @Query('status') status?: TaskStatus,
-  ) {
+  ): Promise<PagedTaskDto> {
     const result = await this.findAllTasksStory.execute({
       filter: {
         page,
