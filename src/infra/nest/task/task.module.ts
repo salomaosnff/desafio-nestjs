@@ -1,4 +1,3 @@
-import { InMemoryTaskRepository } from '@/infra/in_memory/task/task.repository';
 import { Module } from '@nestjs/common';
 import { TaskController } from './task.controller';
 import {
@@ -10,11 +9,14 @@ import {
 } from '@/application/task/stories';
 import { TaskRepository } from '@/application/task/task.repository';
 
+// import { InMemoryTaskRepository } from '@/infra/in_memory/task/task.repository';
+import { PrimaTaskRepository } from '@/infra/prisma/task/task.repository';
+
 @Module({
   providers: [
     {
       provide: 'TaskRepository',
-      useClass: InMemoryTaskRepository, // Experimente trocar para `InMemoryTaskRepository`
+      useClass: PrimaTaskRepository, // Experimente trocar para `InMemoryTaskRepository`
     },
     // Abaixo optei por utilizar `useFactory` para instanciar as stories
     // pois assim não preciso importar dependencias do NestJS no arquivo da story

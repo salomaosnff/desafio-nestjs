@@ -14,14 +14,14 @@ import { Task } from '@/domain/task';
 export class InMemoryTaskRepository implements TaskRepository {
   data = new Map<string, Task>();
 
-  async create(task: Task): AsyncResult<Task, TaskRepositoryError> {
+  async create(task: Task): AsyncResult<void, TaskRepositoryError> {
     this.data.set(task.id, task);
-    return Ok(task);
+    return Ok();
   }
 
-  async update(task: Task): AsyncResult<Task, TaskRepositoryError> {
+  async update(task: Task): AsyncResult<void, TaskRepositoryError> {
     this.data.set(task.id, task);
-    return Ok(task);
+    return Ok();
   }
 
   async delete(task: Task): AsyncResult<void, TaskRepositoryError> {

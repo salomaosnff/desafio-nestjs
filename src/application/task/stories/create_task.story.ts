@@ -2,7 +2,7 @@ import { AsyncResult } from '@/@shared/types';
 import { TaskRepository, TaskRepositoryError } from '../task.repository';
 import { Task } from '@/domain/task';
 import { TaskError } from '@/domain/task/task.entity';
-import { Err } from '@/@shared/result';
+import { Err, Ok } from '@/@shared/result';
 
 export interface StoryInput {
   title: string;
@@ -39,6 +39,9 @@ export class Story {
       description: input.description,
     })
       .map_err<StoryError>()
-      .and_then_async((task) => this.taskRepository.create(task));
+      .and_then_async(async (task) => {
+        await this.taskRepository.create(task);
+        return Ok(task);
+      });
   }
 }

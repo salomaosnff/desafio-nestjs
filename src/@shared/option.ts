@@ -143,3 +143,29 @@ export function Some<const T>(value: T): SomeValue<T> {
 
 /** Valor None do Option */
 export const None: NoneValue<never> = new NoneValue();
+
+function is_nullish(value: unknown): value is null | undefined {
+  return (value ?? null) === null;
+}
+
+/**
+ * Converte um valor nulo ou indefinido para um Option
+ * @param value
+ * @returns Option
+ * @template T Tipo do valor
+ * @example
+ * nullish_to_option(null) // None
+ * nullish_to_option(undefined) // None
+ * nullish_to_option(10) // Some(10)
+ * nullish_to_option('') // Some('')
+ * nullish_to_option({}) // Some({})
+ */
+function from_nullish<T>(value: T | null | undefined): Option<T> {
+  return is_nullish(value) ? None : Some(value);
+}
+
+export const Option = {
+  Some,
+  None,
+  from_nullish,
+};

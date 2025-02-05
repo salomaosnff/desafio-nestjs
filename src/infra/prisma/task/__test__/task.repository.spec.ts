@@ -1,12 +1,12 @@
 import { Task } from '@/domain/task';
-import { InMemoryTaskRepository } from '../task.repository';
+import { PrimaTaskRepository } from '../task.repository';
 import { TaskStatus } from '@/domain/task/task.entity';
 
-describe('InMemoryTaskRepository', () => {
-  let repository: InMemoryTaskRepository;
+describe('PrimaTaskRepository', () => {
+  let repository: PrimaTaskRepository;
 
   beforeEach(() => {
-    repository = new InMemoryTaskRepository();
+    repository = new PrimaTaskRepository();
   });
 
   it('should create a task', async () => {

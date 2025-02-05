@@ -2,7 +2,7 @@ import { AsyncResult } from '@/@shared/types';
 import { TaskRepository, TaskRepositoryError } from '../task.repository';
 import { Task } from '@/domain/task';
 import { TaskError, TaskStatus } from '@/domain/task/task.entity';
-import { Err } from '@/@shared/result';
+import { Err, Ok } from '@/@shared/result';
 
 export interface StoryInput {
   id: string;
@@ -38,6 +38,9 @@ export class Story {
       .map_err<StoryError>()
       .and_then((result) => result.ok_or({ code: 'TaskNotFound' }))
       .and_then((task) => task.assign(data))
-      .and_then_async((task) => this.taskRepository.update(task));
+      .and_then_async(async (task) => {
+        await this.taskRepository.update(task);
+        return Ok(task);
+      });
   }
 }

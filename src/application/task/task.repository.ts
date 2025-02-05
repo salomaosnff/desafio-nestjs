@@ -32,14 +32,14 @@ export interface TaskRepository {
    * @param task Tarefa a ser criada
    * @returns Tarefa criada
    */
-  create(task: Task): AsyncResult<Task, TaskRepositoryError>;
+  create(task: Task): AsyncResult<void, TaskRepositoryError>;
 
   /**
    * Atualiza uma tarefa
    * @param task Tarefa a ser atualizada
    * @returns Tarefa atualizada
    */
-  update(task: Task): AsyncResult<Task, TaskRepositoryError>;
+  update(task: Task): AsyncResult<void, TaskRepositoryError>;
 
   /**
    * Remove uma tarefa
