@@ -1,0 +1,2 @@
+DELETE http://localhost:3000/tasks/2dea5832-6ed3-427f-9b3c-33d0269aae6f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA2N2YzMTgyLTU4OGEtNDBhMy04NzQ5LTJmYTcyYzMwYzQ3ZCIsImlhdCI6MTczODg1OTc4MywiZXhwIjoxNzM4ODYzMzgzfQ.0VS742S8Sm-ekdrdVin_c-omn9JCJWCmZMYlDuK2lH8

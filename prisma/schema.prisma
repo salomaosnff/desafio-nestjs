@@ -14,10 +14,21 @@ datasource db {
 }
 
 model Task {
-  id        String   @id @default(uuid())
-  title     String
+  id          String   @id @default(uuid())
+  title       String
   description String?
-  status    String   @default("OPEN")
+  status      String   @default("OPEN")
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model User {
+  id         String   @id @default(uuid())
+  username   String   @unique
+  password   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  Task       Task[]
 }

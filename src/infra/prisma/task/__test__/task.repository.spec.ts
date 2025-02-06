@@ -1,18 +1,55 @@
 import { Task } from '@/domain/task';
 import { PrimaTaskRepository } from '../task.repository';
 import { TaskStatus } from '@/domain/task/task.entity';
+import { PrismaClient } from '@prisma/client';
 
 describe('PrimaTaskRepository', () => {
+  const USER_ID = crypto.randomUUID();
+
   let repository: PrimaTaskRepository;
+
+  beforeAll(async () => {
+    const client = new PrismaClient();
+
+    await client.user.create({
+      data: {
+        id: USER_ID,
+        username: `user-${USER_ID}`,
+        password: 'abcd', // Não precisa de hash para testes
+      },
+    });
+
+    await client.$disconnect();
+  });
 
   beforeEach(() => {
     repository = new PrimaTaskRepository();
+  });
+
+  afterAll(async () => {
+    const client = new PrismaClient();
+
+    await client.task.deleteMany({
+      where: {
+        user_id: USER_ID,
+      },
+    });
+
+    await client.user.delete({
+      where: {
+        id: USER_ID,
+      },
+    });
+
+    await client.$disconnect();
+    await repository.prisma.$disconnect();
   });
 
   it('should create a task', async () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     const result = await repository.create(task);
@@ -25,6 +62,7 @@ describe('PrimaTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task);
@@ -45,11 +83,12 @@ describe('PrimaTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task);
 
-    const result = await repository.findById(task.id);
+    const result = await repository.find_by_id(task.id);
 
     expect(result.is_ok()).toBeTruthy();
     expect(result.unwrap().is_some()).toBeTruthy();
@@ -57,7 +96,7 @@ describe('PrimaTaskRepository', () => {
   });
 
   it('should return None when task is not found', async () => {
-    const result = await repository.findById('invalid-id');
+    const result = await repository.find_by_id('invalid-id');
 
     expect(result.is_ok()).toBeTruthy();
     expect(result.unwrap().is_none()).toBeTruthy();
@@ -67,6 +106,7 @@ describe('PrimaTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task);
@@ -75,7 +115,7 @@ describe('PrimaTaskRepository', () => {
 
     expect(result.is_ok()).toBeTruthy();
 
-    const foundResult = (await repository.findById(task.id)).map((result) =>
+    const foundResult = (await repository.find_by_id(task.id)).map((result) =>
       result.is_some(),
     );
 
@@ -87,17 +127,19 @@ describe('PrimaTaskRepository', () => {
     const task1 = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll();
+    const result = await repository.find_all();
 
     expect(result.is_ok()).toBeTruthy();
 
@@ -111,17 +153,19 @@ describe('PrimaTaskRepository', () => {
     const task1 = Task.create({
       title: 'A test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Another test',
       description: 'Test description 2',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       title: 'Another',
     });
 
@@ -139,17 +183,19 @@ describe('PrimaTaskRepository', () => {
     const task1 = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       page: 2,
       page_size: 1,
     });
@@ -163,17 +209,19 @@ describe('PrimaTaskRepository', () => {
       title: 'Test',
       description: 'Test description',
       status: TaskStatus.DONE,
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       status: TaskStatus.DONE,
     });
 
@@ -191,17 +239,19 @@ describe('PrimaTaskRepository', () => {
     const task1 = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER_ID,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       title: 'Test',
       description: '2',
     });

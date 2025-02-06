@@ -11,8 +11,10 @@ import { TaskRepository } from '@/application/task/task.repository';
 
 // import { InMemoryTaskRepository } from '@/infra/in_memory/task/task.repository';
 import { PrimaTaskRepository } from '@/infra/prisma/task/task.repository';
+import { UserModule } from '../user/user.module';
 
 @Module({
+  imports: [UserModule],
   providers: [
     {
       provide: 'TaskRepository',

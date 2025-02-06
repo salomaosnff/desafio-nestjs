@@ -3,8 +3,15 @@ import { TaskRepository } from '../../task.repository';
 import { Task } from '@/domain/task';
 import { CreateTaskStory } from '..';
 import { TaskError } from '@/domain/task/task.entity';
+import { User } from '@/domain/user';
 
 describe('CreateTaskStory', () => {
+  const USER = User.create({
+    id: 'user-id',
+    username: 'user',
+    password: 'abcd',
+  }).expect('Failed to create user');
+
   let repository: TaskRepository;
 
   beforeEach(() => {
@@ -15,6 +22,7 @@ describe('CreateTaskStory', () => {
     const result = await new CreateTaskStory.Story(repository).execute({
       title: 'Test',
       description: 'Test description',
+      user: USER,
     });
 
     expect(result.is_ok()).toBeTruthy();
@@ -38,6 +46,7 @@ describe('CreateTaskStory', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       title: undefined as any,
       description: 'Test description',
+      user: USER,
     });
 
     expect(result.is_err()).toBeTruthy();
@@ -51,6 +60,7 @@ describe('CreateTaskStory', () => {
     const result = await new CreateTaskStory.Story(repository).execute({
       title: '',
       description: 'Test description',
+      user: USER,
     });
 
     expect(result.is_err()).toBeTruthy();

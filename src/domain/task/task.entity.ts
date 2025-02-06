@@ -18,6 +18,7 @@ interface CreateTaskInput {
   title: string;
   description?: string;
   status?: TaskStatus;
+  user_id: string;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -38,6 +39,7 @@ export class Task {
   title: string;
   description?: string;
   status: TaskStatus;
+  user_id: string;
   created_at: Date;
   updated_at: Date;
 
@@ -85,6 +87,13 @@ export class Task {
       return Err({
         code: 'TaskError',
         errors: [{ field: 'title', message: `'title' is required` }],
+      });
+    }
+
+    if (!this.user_id?.length) {
+      return Err({
+        code: 'TaskError',
+        errors: [{ field: 'user_id', message: `'user_id' is required` }],
       });
     }
 

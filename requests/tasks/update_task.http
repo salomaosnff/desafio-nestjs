@@ -1,0 +1,7 @@
+PATCH http://localhost:3000/tasks/d6167fb1-0884-4343-937a-9a234886437f
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYyZjdlN2U2LWQ2ZmUtNGMyYi1hN2JjLTExMGY3YjFhN2UxZiIsImlhdCI6MTczODg1NzQxNCwiZXhwIjoxNzM4OTQzODE0fQ.MswzPs1d0AVDFarXSgC9YqQzSDk3sRPcxskwHfxfHFs
+
+{
+    "description": "Descrição atualizada"
+}

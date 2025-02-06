@@ -29,7 +29,7 @@ export class InMemoryTaskRepository implements TaskRepository {
     return Ok();
   }
 
-  async findById(id: string): AsyncResult<Option<Task>, TaskRepositoryError> {
+  async find_by_id(id: string): AsyncResult<Option<Task>, TaskRepositoryError> {
     if (this.data.has(id)) {
       return Ok(Some(this.data.get(id) as Task));
     }
@@ -37,7 +37,7 @@ export class InMemoryTaskRepository implements TaskRepository {
     return Ok(None);
   }
 
-  async findAll(
+  async find_all(
     filter?: FindAllTasksFilter,
   ): AsyncResult<Paged<Task>, TaskRepositoryError> {
     const { page = 1, page_size = 20 } = filter || {};

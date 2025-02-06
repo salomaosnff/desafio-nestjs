@@ -24,6 +24,7 @@ export class PrimaTaskRepository implements TaskRepository {
           description: task.description,
           created_at: task.created_at,
           updated_at: task.updated_at,
+          user_id: task.user_id,
         },
       });
 
@@ -61,7 +62,7 @@ export class PrimaTaskRepository implements TaskRepository {
     }
   }
 
-  async findById(id: string): AsyncResult<Option<Task>, TaskRepositoryError> {
+  async find_by_id(id: string): AsyncResult<Option<Task>, TaskRepositoryError> {
     try {
       const result = await this.prisma.task.findUnique({
         where: { id },
@@ -76,6 +77,7 @@ export class PrimaTaskRepository implements TaskRepository {
             description: model.description || undefined,
             created_at: model.created_at,
             updated_at: model.updated_at,
+            user_id: model.user_id,
           }).expect('Failed to convert model to Task'),
         ),
       );
@@ -84,7 +86,7 @@ export class PrimaTaskRepository implements TaskRepository {
     }
   }
 
-  async findAll(
+  async find_all(
     filter?: FindAllTasksFilter,
   ): AsyncResult<Paged<Task>, TaskRepositoryError> {
     try {
@@ -121,6 +123,7 @@ export class PrimaTaskRepository implements TaskRepository {
               description: model.description || undefined,
               created_at: model.created_at,
               updated_at: model.updated_at,
+              user_id: model.user_id,
             }).expect('Failed to convert model to Task'),
           ),
           total,

@@ -1,0 +1,2 @@
+GET http://localhost:3000/tasks?status=OPEN&title=T&page=1&page_size=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0MWRjOWYzLWVmMWUtNGY2Yy05ODQ2LTI3YzIzZGQ0N2E3MSIsImlhdCI6MTczODg1OTY4MiwiZXhwIjoxNzM4ODYzMjgyfQ.gL68mIzE5DewiFaXipYtLU8Agh2qleSUATVHW7x8Vz8

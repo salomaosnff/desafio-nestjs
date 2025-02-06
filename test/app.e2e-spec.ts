@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -8,7 +9,18 @@ import { App } from 'supertest/types';
 import { AppModule } from '@/infra/nest/app.module';
 
 describe('AppController (e2e)', () => {
+  const username = `e2e-user-${crypto.randomUUID()}`;
   let app: INestApplication<App>;
+
+  function getToken(): Promise<string> {
+    return request(app.getHttpServer())
+      .post('/login')
+      .send({
+        username,
+        password: 'abcd',
+      })
+      .then((response) => response.body.token);
+  }
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -19,9 +31,45 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('GET /tasks should return a paged list of tasks', () => {
+  it('POST /register should register a user and return a user', () => {
+    return request(app.getHttpServer())
+      .post('/register')
+      .send({
+        username,
+        password: 'abcd',
+      })
+      .expect(201)
+      .expect((response) => {
+        expect(response.body).toMatchObject({
+          id: expect.any(String),
+          username,
+        });
+      });
+  });
+
+  it('POST /login should login a user and return a token and user', () => {
+    return request(app.getHttpServer())
+      .post('/login')
+      .send({
+        username,
+        password: 'abcd',
+      })
+      .expect(200)
+      .expect((response) => {
+        expect(response.body).toMatchObject({
+          token: expect.any(String),
+          user: {
+            id: expect.any(String),
+            username,
+          },
+        });
+      });
+  });
+
+  it('GET /tasks should return a paged list of tasks', async () => {
     return request(app.getHttpServer())
       .get('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .expect(200)
       .expect((response) => {
         expect(response.body).toMatchObject({
@@ -33,9 +81,10 @@ describe('AppController (e2e)', () => {
       });
   });
 
-  it('POST /tasks should create a task', () => {
+  it('POST /tasks should create a task', async () => {
     return request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'First task',
         description: 'First task description',
@@ -50,13 +99,19 @@ describe('AppController (e2e)', () => {
       });
   });
 
-  it('POST /tasks should return an error when input is missing', () => {
-    return request(app.getHttpServer()).post('/tasks').send({}).expect(400);
-  });
-
-  it('POST /tasks should return an error when title is missing', () => {
+  it('POST /tasks should return an error when input is missing', async () => {
     return request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
+      .send({})
+      .expect(400);
+  });
+
+  it('POST /tasks should return an error when title is missing', async () => {
+    return request(app.getHttpServer())
+      .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
+
       .send({
         description: 'First task description',
       })
@@ -66,6 +121,7 @@ describe('AppController (e2e)', () => {
   it('PATCH /tasks/:id should update a task', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'Not updated Task',
         description: 'Not updated Task description',
@@ -74,6 +130,7 @@ describe('AppController (e2e)', () => {
 
     return request(app.getHttpServer())
       .patch(`/tasks/${body.id}`)
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'Updated title',
         description: 'Updated description',
@@ -90,9 +147,11 @@ describe('AppController (e2e)', () => {
       });
   });
 
-  it('PATCH /tasks/:id should return an error when task is not found', () => {
+  it('PATCH /tasks/:id should return an error when task is not found', async () => {
     return request(app.getHttpServer())
       .patch('/tasks/invalid-id')
+      .set('Authorization', `Bearer ${await getToken()}`)
+
       .send({
         title: 'Updated title',
         description: 'Updated description',
@@ -103,6 +162,7 @@ describe('AppController (e2e)', () => {
   it('GET /tasks/:id should return a task', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'Task to find by id',
         description: 'Task to find by id description',
@@ -111,6 +171,7 @@ describe('AppController (e2e)', () => {
 
     return request(app.getHttpServer())
       .get(`/tasks/${body.id}`)
+      .set('Authorization', `Bearer ${await getToken()}`)
       .expect(200)
       .expect((response) => {
         expect(response.body).toMatchObject({
@@ -121,29 +182,40 @@ describe('AppController (e2e)', () => {
       });
   });
 
-  it('GET /tasks/:id should return an error when task is not found', () => {
-    return request(app.getHttpServer()).get('/tasks/invalid-id').expect(404);
+  it('GET /tasks/:id should return an error when task is not found', async () => {
+    return request(app.getHttpServer())
+      .get('/tasks/invalid-id')
+      .set('Authorization', `Bearer ${await getToken()}`)
+      .expect(404);
   });
 
   it('DELETE /tasks/:id should delete a task', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'Task to delete',
         description: 'Task to delete description',
       })
       .expect(201);
 
-    return request(app.getHttpServer()).delete(`/tasks/${body.id}`).expect(204);
+    return request(app.getHttpServer())
+      .delete(`/tasks/${body.id}`)
+      .set('Authorization', `Bearer ${await getToken()}`)
+      .expect(204);
   });
 
-  it('DELETE /tasks/:id should return an error when task is not found', () => {
-    return request(app.getHttpServer()).delete('/tasks/invalid-id').expect(404);
+  it('DELETE /tasks/:id should return an error when task is not found', async () => {
+    return request(app.getHttpServer())
+      .delete('/tasks/invalid-id')
+      .set('Authorization', `Bearer ${await getToken()}`)
+      .expect(404);
   });
 
   it('GET /tasks?status=DONE should return a paged list of tasks with status DONE', async () => {
     const { body } = await request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'Task done',
         description: 'Task done description',
@@ -152,6 +224,7 @@ describe('AppController (e2e)', () => {
 
     await request(app.getHttpServer())
       .patch(`/tasks/${body.id}`)
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         status: 'DONE',
       })
@@ -159,6 +232,7 @@ describe('AppController (e2e)', () => {
 
     return request(app.getHttpServer())
       .get('/tasks?status=DONE')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .expect(200)
       .expect((response) => {
         expect(response.body).toMatchObject({
@@ -179,6 +253,7 @@ describe('AppController (e2e)', () => {
   it('GET /tasks?title=Task should return a paged list of tasks with title containing Task', async () => {
     await request(app.getHttpServer())
       .post('/tasks')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .send({
         title: 'Task to find by title',
         description: 'Task to find by title description',
@@ -187,6 +262,7 @@ describe('AppController (e2e)', () => {
 
     return request(app.getHttpServer())
       .get('/tasks?title=Task')
+      .set('Authorization', `Bearer ${await getToken()}`)
       .expect(200)
       .expect((response) => {
         expect(response.body).toMatchObject({

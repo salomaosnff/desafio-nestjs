@@ -52,13 +52,13 @@ export interface TaskRepository {
    * @param id Identificador da tarefa
    * @returns Tarefa encontrada
    */
-  findById(id: string): AsyncResult<Option<Task>, TaskRepositoryError>;
+  find_by_id(id: string): AsyncResult<Option<Task>, TaskRepositoryError>;
 
   /**
    * Busca todas as tarefas
    * @returns Lista de tarefas
    */
-  findAll(
+  find_all(
     filter?: FindAllTasksFilter,
   ): AsyncResult<Paged<Task>, TaskRepositoryError>;
 }

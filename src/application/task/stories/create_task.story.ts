@@ -3,10 +3,12 @@ import { TaskRepository, TaskRepositoryError } from '../task.repository';
 import { Task } from '@/domain/task';
 import { TaskError } from '@/domain/task/task.entity';
 import { Err, Ok } from '@/@shared/result';
+import { User } from '@/domain/user';
 
 export interface StoryInput {
   title: string;
   description?: string;
+  user: User;
 }
 
 export type StoryError =
@@ -37,6 +39,7 @@ export class Story {
     return Task.create({
       title: input.title,
       description: input.description,
+      user_id: input.user.id,
     })
       .map_err<StoryError>()
       .and_then_async(async (task) => {

@@ -91,7 +91,7 @@ export interface Result<T, E> {
 }
 
 class OkValue<T, E> implements Result<T, E> {
-  constructor(private value: T) {}
+  constructor(public value: T) {}
 
   is_err(): this is ErrValue<T, E> {
     return false;

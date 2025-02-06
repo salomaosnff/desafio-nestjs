@@ -16,10 +16,12 @@ describe('FindAllTasksStory', () => {
       {
         title: 'Test',
         description: 'Test description',
+        user_id: 'user-id',
       },
       {
         title: 'Test 2',
         description: 'Test description 2',
+        user_id: 'user-id',
       },
     ].map((task) => Task.create(task).expect('Failed to create task'));
 
@@ -55,10 +57,12 @@ describe('FindAllTasksStory', () => {
       {
         title: 'Test',
         description: 'Test description',
+        user_id: 'user-id',
       },
       {
         title: 'Test 2',
         description: 'Test description 2',
+        user_id: 'user-id',
       },
     ].map((task) => Task.create(task).expect('Failed to create task'));
 
@@ -84,10 +88,12 @@ describe('FindAllTasksStory', () => {
       {
         title: 'A test',
         description: 'Test description',
+        user_id: 'user-id',
       },
       {
         title: 'Another test',
         description: 'Test description 2',
+        user_id: 'user-id',
       },
     ].map((task) => Task.create(task).expect('Failed to create task'));
 

@@ -14,6 +14,7 @@ describe('FindTaskByIdStory', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: 'user-id',
     }).expect('Failed to create task');
 
     await repository.create(task);

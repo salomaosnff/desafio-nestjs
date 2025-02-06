@@ -1,8 +1,15 @@
 import { Task } from '@/domain/task';
 import { InMemoryTaskRepository } from '../task.repository';
 import { TaskStatus } from '@/domain/task/task.entity';
+import { User } from '@/domain/user';
 
 describe('InMemoryTaskRepository', () => {
+  const USER = User.create({
+    id: 'user-id',
+    username: 'user',
+    password: 'abcd',
+  }).expect('Failed to create user');
+
   let repository: InMemoryTaskRepository;
 
   beforeEach(() => {
@@ -13,6 +20,7 @@ describe('InMemoryTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     const result = await repository.create(task);
@@ -25,6 +33,7 @@ describe('InMemoryTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task);
@@ -45,11 +54,12 @@ describe('InMemoryTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task);
 
-    const result = await repository.findById(task.id);
+    const result = await repository.find_by_id(task.id);
 
     expect(result.is_ok()).toBeTruthy();
     expect(result.unwrap().is_some()).toBeTruthy();
@@ -57,7 +67,7 @@ describe('InMemoryTaskRepository', () => {
   });
 
   it('should return None when task is not found', async () => {
-    const result = await repository.findById('invalid-id');
+    const result = await repository.find_by_id('invalid-id');
 
     expect(result.is_ok()).toBeTruthy();
     expect(result.unwrap().is_none()).toBeTruthy();
@@ -67,6 +77,7 @@ describe('InMemoryTaskRepository', () => {
     const task = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task);
@@ -75,7 +86,7 @@ describe('InMemoryTaskRepository', () => {
 
     expect(result.is_ok()).toBeTruthy();
 
-    const foundResult = (await repository.findById(task.id)).map((result) =>
+    const foundResult = (await repository.find_by_id(task.id)).map((result) =>
       result.is_some(),
     );
 
@@ -87,17 +98,19 @@ describe('InMemoryTaskRepository', () => {
     const task1 = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll();
+    const result = await repository.find_all();
 
     expect(result.is_ok()).toBeTruthy();
 
@@ -111,17 +124,19 @@ describe('InMemoryTaskRepository', () => {
     const task1 = Task.create({
       title: 'A test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Another test',
       description: 'Test description 2',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       title: 'Another',
     });
 
@@ -139,17 +154,19 @@ describe('InMemoryTaskRepository', () => {
     const task1 = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       page: 2,
       page_size: 1,
     });
@@ -163,17 +180,19 @@ describe('InMemoryTaskRepository', () => {
       title: 'Test',
       description: 'Test description',
       status: TaskStatus.DONE,
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       status: TaskStatus.DONE,
     });
 
@@ -191,17 +210,19 @@ describe('InMemoryTaskRepository', () => {
     const task1 = Task.create({
       title: 'Test',
       description: 'Test description',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     const task2 = Task.create({
       title: 'Test 2',
       description: 'Test description 2',
+      user_id: USER.id,
     }).expect('Failed to create task');
 
     await repository.create(task1);
     await repository.create(task2);
 
-    const result = await repository.findAll({
+    const result = await repository.find_all({
       title: 'Test',
       description: '2',
     });

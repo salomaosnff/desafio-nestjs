@@ -32,7 +32,7 @@ export class Story {
       });
     }
 
-    return (await this.taskRepository.findById(id))
+    return (await this.taskRepository.find_by_id(id))
       .map_err<StoryError>()
       .and_then((result) => result.ok_or({ code: 'TaskNotFound' }));
   }

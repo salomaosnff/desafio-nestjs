@@ -29,6 +29,6 @@ export class Story {
     filter.page ??= 1;
     filter.page_size ??= 20;
 
-    return this.taskRepository.findAll(filter);
+    return this.taskRepository.find_all(filter);
   }
 }
